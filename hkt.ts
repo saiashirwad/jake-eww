@@ -1,10 +1,10 @@
 export type Fn = (...x: never[]) => unknown
 
-export declare const $1: unique symbol
-export type $1 = typeof $1
+export declare const _: unique symbol
+export type _ = typeof _
 
 export declare abstract class Kind<F extends Fn = Fn> {
-	abstract readonly [$1]: unknown
+	abstract readonly [_]: unknown
 	f: F
 }
 
@@ -30,7 +30,7 @@ export type apply<
 	X extends Input<F>,
 > = ReturnType<
 	(F & {
-		[$1]: X
+		[_]: X
 	})["f"]
 >
 

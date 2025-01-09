@@ -1,4 +1,4 @@
-import type { Kind, $1, apply, cast, pipe } from "./hkt"
+import type { Kind, _, apply, cast, pipe } from "./hkt"
 
 type JQNode =
 	| FieldAccess<any>
@@ -200,7 +200,7 @@ type lol = char<"{hi there", "{">
 // 	: false
 
 interface capitalize extends Kind {
-	f(x: cast<this[$1], Record<string, unknown>>): {
+	f(x: cast<this[_], Record<string, unknown>>): {
 		[key in keyof typeof x as Capitalize<
 			key & string
 		>]: (typeof x)[key]
@@ -208,14 +208,14 @@ interface capitalize extends Kind {
 }
 
 interface optional extends Kind {
-	f(x: cast<this[$1], Record<string, unknown>>): {
+	f(x: cast<this[_], Record<string, unknown>>): {
 		[key in keyof typeof x]?: (typeof x)[key]
 	}
 }
 
 export interface head extends Kind {
 	f(
-		x: cast<this[$1], unknown[]>,
+		x: cast<this[_], unknown[]>,
 	): typeof x extends [] ? never : (typeof x)[0]
 }
 
