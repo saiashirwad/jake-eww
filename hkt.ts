@@ -6,6 +6,7 @@ export type _ = typeof _
 export declare abstract class Kind<F extends Fn = Fn> {
 	abstract readonly [_]: unknown
 	f: F
+	a: this[_]
 }
 
 export type Input<F extends Kind> = F extends {
@@ -33,5 +34,3 @@ export type apply<
 		[_]: X
 	})["f"]
 >
-
-//
