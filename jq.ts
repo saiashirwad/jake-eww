@@ -1,10 +1,4 @@
-import type {
-	Kind,
-	Type,
-	Function,
-	$,
-	$$,
-} from "./hkt"
+import type { Kind, Type, Fn, $, $$ } from "./hkt"
 import type { ParseConfigFileHost } from "typescript"
 
 type JQNode =
@@ -30,11 +24,10 @@ type FieldAccess<
 }
 
 // Represents []
-type ArrayMapping<params extends { next: null }> =
-	{
-		type: "array_mapping"
-		next: params["next"]
-	}
+type ArrayMapping<params extends { next: null }> = {
+	type: "array_mapping"
+	next: params["next"]
+}
 
 // Represents [0]
 type ArrayIndex = {
@@ -131,29 +124,21 @@ type Identity = {
 // }
 
 type trimWhitespace<t extends string> =
-	t extends `${" " | "\n" | "\t"}${infer Rest}`
-		? trimWhitespace<Rest>
-		: t
+	t extends `${" " | "\n" | "\t"}${infer Rest}` ? trimWhitespace<Rest> : t
 
 type parser<
 	str extends string,
 	ctx extends object,
 > = trimWhitespace<str> extends "" ? ctx : never
 
-type ParserResult<
-	value extends any,
-	rest extends string,
-> = {
+type ParserResult<value extends any, rest extends string> = {
 	value: value
 	rest: rest
 }
 
 type parseArrayMapping<str extends string> =
 	trimWhitespace<str> extends `[]${infer rest}`
-		? ParserResult<
-				ArrayMapping<{ next: null }>,
-				rest
-			>
+		? ParserResult<ArrayMapping<{ next: null }>, rest>
 		: never
 
 type wordTerminator = "." | " " | "[" | "|" | ","
@@ -179,9 +164,7 @@ type parseNumber<
 type char<
 	str extends string,
 	ch extends string,
-> = str extends `${ch}${infer rest}`
-	? ParserResult<ch, rest>
-	: never
+> = str extends `${ch}${infer rest}` ? ParserResult<ch, rest> : never
 
 type parseFieldAccess<str extends string> =
 	trimWhitespace<str> extends `.${infer rest}`
@@ -210,35 +193,20 @@ type lol = char<"{hi there", "{">
 // 	? true
 // 	: false
 
-type OmitNonStrings<
-	O extends Record<string, unknown>,
-> = {
-	[key in keyof O as O[key] extends string
-		? key
-		: never]: O[key]
+type OmitNonStrings<O extends Record<string, unknown>> = {
+	[key in keyof O as O[key] extends string ? key : never]: O[key]
 }
 
 interface OmitNonStringsKind extends Kind.Kind {
 	f(
-		x: Type._$cast<
-			this[Kind._],
-			Record<string, unknown>
-		>,
+		x: Type._$cast<this[Kind._], Record<string, unknown>>,
 	): OmitNonStrings<typeof x>
 }
 
 interface OptionalKind extends Kind.Kind {
-	f(
-		x: Type._$cast<
-			this[Kind._],
-			Record<string, unknown>
-		>,
-	): {
+	f(x: Type._$cast<this[Kind._], Record<string, unknown>>): {
 		[key in keyof typeof x]?: (typeof x)[key]
 	}
 }
 
-type result = $$<
-	[OmitNonStringsKind, OptionalKind],
-	{ hi: "there"; age: 5 }
->
+type result = $$<[OmitNonStringsKind, OptionalKind], { hi: "there"; age: 5 }>
