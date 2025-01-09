@@ -38,11 +38,3 @@ export type apply<F extends Kind, X extends FnInput<F>> = FnReturn<
 		readonly [_]: X
 	})["f"]
 >
-
-type OmitNonStrings<O extends Record<string, unknown>> = {
-	[key in keyof O as O[key] extends string ? key : never]: O[key]
-}
-
-interface OmitNonStringsKind extends Kind {
-	f(x: cast<this[_], Record<string, unknown>>): OmitNonStrings<typeof x>
-}
