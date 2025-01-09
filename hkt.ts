@@ -1,5 +1,4 @@
-// Inspired by https://github.com/poteat/hkt-toolbelt
-// and https://code.lol/post/programming/higher-kinded-types/
+// https://code.lol/post/programming/higher-kinded-types/
 
 export type Fn = (...x: never[]) => unknown
 
