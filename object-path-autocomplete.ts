@@ -12,20 +12,13 @@ const data = {
 const out = get(data, "items.0")
 //    ^?
 
-function get<
-	const o extends object,
-	path extends string,
->(
+function get<const o extends object, path extends string>(
 	data: o,
-	pathStr: conform<
-		path,
-		string & validatePath<o, path>
-	>,
+	pathStr: conform<path, string & validatePath<o, path>>,
 ): getPath<o, path> {
 	let target: any = data
 	const path = pathStr.split(".")
-	while (path.length)
-		target = target[path.shift()!]
+	while (path.length) target = target[path.shift()!]
 	return target
 }
 
@@ -35,16 +28,10 @@ type keyOf<o> = o extends readonly unknown[]
 		? `${number}`
 		: keyof o & `${number}`
 	: {
-			[k in keyof o]: k extends string
-				? k
-				: k extends number
-					? `${k}`
-					: never
+			[k in keyof o]: k extends string ? k : k extends number ? `${k}` : never
 		}[keyof o]
 
-type lol = keyOf<
-	[{ a: string; b: { name: "hi" } }, 2, 5, 3]
->
+type lol = keyOf<[{ a: string; b: { name: "hi" } }, 2, 5, 3]>
 
 type getKey<o, k> = k extends keyof o
 	? o[k]
@@ -65,19 +52,13 @@ type validatePath<
 	prefix extends string = "",
 > = path extends `${infer head}.${infer tail}`
 	? head extends keyOf<o>
-		? validatePath<
-				getKey<o, head>,
-				tail,
-				`${prefix}${head}.`
-			>
+		? validatePath<getKey<o, head>, tail, `${prefix}${head}.`>
 		: `Key '${head}' is not valid following '${prefix}'`
 	: path extends keyOf<o>
 		? `${prefix}${path}`
 		: {
 				// find suffixes that would make the segment valid
-				[k in keyOf<o>]: k extends `${path}${string}`
-					? `${prefix}${k}`
-					: never
+				[k in keyOf<o>]: k extends `${path}${string}` ? `${prefix}${k}` : never
 			}[keyOf<o>]
 
 type conform<t, base> = t extends base ? t : base

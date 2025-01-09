@@ -1,4 +1,4 @@
-import type { Kind, ARG1, apply, cast, pipe } from "./hkt"
+import type { Kind, $1, apply, cast, pipe } from "./hkt"
 
 type JQNode =
 	| FieldAccess<any>
@@ -123,14 +123,19 @@ type Identity = {
 // }
 
 type trimWhitespace<t extends string> =
-	t extends `${" " | "\n" | "\t"}${infer Rest}` ? trimWhitespace<Rest> : t
+	t extends `${" " | "\n" | "\t"}${infer Rest}`
+		? trimWhitespace<Rest>
+		: t
 
 type parser<
 	str extends string,
 	ctx extends object,
 > = trimWhitespace<str> extends "" ? ctx : never
 
-type ParserResult<value extends any, rest extends string> = {
+type ParserResult<
+	value extends any,
+	rest extends string,
+> = {
 	value: value
 	rest: rest
 }
@@ -163,7 +168,9 @@ type parseNumber<
 type char<
 	str extends string,
 	ch extends string,
-> = str extends `${ch}${infer rest}` ? ParserResult<ch, rest> : never
+> = str extends `${ch}${infer rest}`
+	? ParserResult<ch, rest>
+	: never
 
 type parseFieldAccess<str extends string> =
 	trimWhitespace<str> extends `.${infer rest}`
@@ -193,22 +200,29 @@ type lol = char<"{hi there", "{">
 // 	: false
 
 interface capitalize extends Kind {
-	f(x: cast<this[ARG1], Record<string, unknown>>): {
-		[key in keyof typeof x as Capitalize<key & string>]: (typeof x)[key]
+	f(x: cast<this[$1], Record<string, unknown>>): {
+		[key in keyof typeof x as Capitalize<
+			key & string
+		>]: (typeof x)[key]
 	}
 }
 
 interface optional extends Kind {
-	f(x: cast<this[ARG1], Record<string, unknown>>): {
+	f(x: cast<this[$1], Record<string, unknown>>): {
 		[key in keyof typeof x]?: (typeof x)[key]
 	}
 }
 
 export interface head extends Kind {
-	f(x: cast<this[ARG1], unknown[]>): typeof x extends [] ? never : (typeof x)[0]
+	f(
+		x: cast<this[$1], unknown[]>,
+	): typeof x extends [] ? never : (typeof x)[0]
 }
 
-type result = pipe<[optional, capitalize], { hi: "there"; age: 5 }>
+type result = pipe<
+	[optional, capitalize],
+	{ hi: "there"; age: 5 }
+>
 //   ^?
 
 type result2 = apply<optional, { hi: "there" }>
