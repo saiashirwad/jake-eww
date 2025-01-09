@@ -1,5 +1,3 @@
-// https://code.lol/post/programming/higher-kinded-types/
-
 export type Fn = (...x: never[]) => unknown
 
 export declare const ARG1: unique symbol
