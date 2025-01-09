@@ -23,10 +23,11 @@ type FieldAccess<
 }
 
 // Represents []
-type ArrayMapping = {
-	type: "array_mapping"
-	next?: JQNode // for .[].foo
-}
+type ArrayMapping<params extends { next: null }> =
+	{
+		type: "array_mapping"
+		next: params["next"]
+	}
 
 // Represents [0]
 type ArrayIndex = {
@@ -142,7 +143,10 @@ type ParserResult<
 
 type parseArrayMapping<str extends string> =
 	trimWhitespace<str> extends `[]${infer rest}`
-		? [ArrayMapping, rest]
+		? ParserResult<
+				ArrayMapping<{ next: null }>,
+				rest
+			>
 		: never
 
 type wordTerminator = "." | " " | "[" | "|" | ","
@@ -152,8 +156,7 @@ type parseWord<
 	acc extends string = "",
 > = str extends `${infer x}${infer rest}`
 	? x extends wordTerminator
-		? // ? [acc, str]
-			ParserResult<acc, str>
+		? ParserResult<acc, str>
 		: parseWord<rest, `${acc}${x}`>
 	: str extends `${infer x}`
 		? ParserResult<`${acc}${x}`, "">
@@ -165,8 +168,7 @@ type parseFieldAccess<str extends string> =
 				infer word extends string,
 				infer rest
 			>
-			? // ? [FieldAccess<{ field: word }>, rest]
-				ParserResult<
+			? ParserResult<
 					FieldAccess<{
 						field: word
 						next: null
@@ -176,8 +178,6 @@ type parseFieldAccess<str extends string> =
 				>
 			: never
 		: never
-
-type lol = parseFieldAccess<".foo.bar">
 
 type haha = parseWord<"ha ha">
 
