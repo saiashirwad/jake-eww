@@ -1,4 +1,5 @@
-// Copied from https://github.com/poteat/hkt-toolbelt
+// Inspired by https://github.com/poteat/hkt-toolbelt
+// and https://code.lol/post/programming/higher-kinded-types/
 
 export type Fn = (...x: never[]) => unknown
 
@@ -12,19 +13,19 @@ export declare abstract class Kind<F extends Fn = Fn> {
 	f: F
 }
 
-export type inputOf<F extends Kind> = F extends {
+export type fnInput<F extends Kind> = F extends {
 	f: (x: infer X) => any
 }
 	? X
 	: unknown
 
 export type reify<K extends Kind> = K & {
-	<X extends inputOf<K>>(
+	<X extends fnInput<K>>(
 		x: inferType<X>,
-	): $<K, X> extends infer Result
+	): apply<K, X> extends infer Result
 		? Result extends Kind
 			? reify<Result>
-			: $<K, X>
+			: apply<K, X>
 		: never
 }
 
@@ -34,10 +35,11 @@ export type pipe<T extends Kind[], X> = T extends [
 ]
 	? [X] extends [never]
 		? never
-		: pipe<Tail, $<Head, cast<X, inputOf<Head>>>>
+		: pipe<Tail, apply<Head, cast<X, fnInput<Head>>>>
 	: X
 
-export type cast<T, U> = [T] extends [U] ? T : U
+export type cast<T, U> = T extends U ? T : U
+
 type inferred =
 	| string
 	| number
@@ -64,16 +66,11 @@ export interface First extends Kind {
 	f(x: cast<this[_], unknown[]>): first<typeof x>
 }
 
-export type $<F extends Kind, X extends inputOf<F>> = returnType<
+export type apply<F extends Kind, X extends fnInput<F>> = returnType<
 	(F & {
 		readonly [_]: X
 	})["f"]
 >
-
-export type $$<
-	FX extends Kind[],
-	X extends FX extends [] ? unknown : inputOf<first<FX>>,
-> = pipe<FX, X>
 
 type OmitNonStrings<O extends Record<string, unknown>> = {
 	[key in keyof O as O[key] extends string ? key : never]: O[key]

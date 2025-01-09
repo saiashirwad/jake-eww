@@ -1,5 +1,4 @@
-import type { _, $, $$, Kind, cast } from "./hkt"
-import type { ParseConfigFileHost } from "typescript"
+import type { Kind, _, cast, pipe } from "./hkt"
 
 type JQNode =
 	| FieldAccess<any>
@@ -207,4 +206,4 @@ interface OptionalKind extends Kind {
 	}
 }
 
-type result = $$<[OmitNonStringsKind, OptionalKind], { hi: "there"; age: 5 }>
+type result = pipe<[OmitNonStringsKind, OptionalKind], { hi: "there"; age: 5 }>
