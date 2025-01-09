@@ -15,13 +15,13 @@ export declare abstract class Kind<F extends Fn = Fn> {
 	f: F
 }
 
-export type pipe<X, T extends Kind[]> = T extends [
+export type pipe<T extends Kind[], X> = T extends [
 	infer Head extends Kind,
 	...infer Tail extends Kind[],
 ]
 	? [X] extends [never]
 		? never
-		: pipe<apply<Head, cast<X, FnInput<Head>>>, Tail>
+		: pipe<Tail, apply<Head, cast<X, FnInput<Head>>>>
 	: X
 
 export type cast<T, U> = T extends U ? T : U

@@ -208,7 +208,7 @@ export interface First extends Kind {
 	f(x: cast<this[_], unknown[]>): typeof x extends [] ? never : (typeof x)[0]
 }
 
-type result = pipe<{ hi: "there"; age: 5 }, [OptionalKind, CapitalizeKind]>
+type result = pipe<[OptionalKind, CapitalizeKind], { hi: "there"; age: 5 }>
 
 type lha = apply<OptionalKind, { hi: "there" }>
 
