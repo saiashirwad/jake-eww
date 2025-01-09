@@ -20,7 +20,7 @@ export type inputOf<F extends Kind> = F extends {
 
 export type reify<K extends Kind> = K & {
 	<X extends inputOf<K>>(
-		x: $infer<X>,
+		x: inferType<X>,
 	): $<K, X> extends infer Result
 		? Result extends Kind
 			? reify<Result>
@@ -38,7 +38,7 @@ export type pipe<T extends Kind[], X> = T extends [
 	: X
 
 export type cast<T, U> = [T] extends [U] ? T : U
-type $inferred =
+type inferred =
 	| string
 	| number
 	| boolean
@@ -46,27 +46,23 @@ type $inferred =
 	| null
 	| Fn
 	| Kind
-	| $inferredTuple
+	| inferredTuple
 	| {
-			[key: string]: $inferred
+			[key: string]: inferred
 	  }
 
-type $inferredTuple = $inferred[] | ReadonlyArray<$inferred>
+type inferredTuple = inferred[] | ReadonlyArray<inferred>
 
-export type $infer<
+export type inferType<
 	X,
-	Narrow = cast<X, $inferred> | [...cast<X, $inferredTuple>],
-> = Narrow extends unknown[] ? { [key in keyof X]: $infer<X[key]> } : Narrow
-
-// list
+	Narrow = cast<X, inferred> | [...cast<X, inferredTuple>],
+> = Narrow extends unknown[] ? { [key in keyof X]: inferType<X[key]> } : Narrow
 
 export type first<T extends unknown[]> = T extends [] ? never : T[0]
 
 export interface First extends Kind {
 	f(x: cast<this[_], unknown[]>): first<typeof x>
 }
-
-export const first = ((x: unknown[]) => x[0]) as reify<First>
 
 export type $<F extends Kind, X extends inputOf<F>> = returnType<
 	(F & {

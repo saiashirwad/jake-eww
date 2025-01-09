@@ -1,4 +1,4 @@
-import type { Kind, Type, Fn, $, $$ } from "./hkt"
+import type { _, $, $$, Kind, cast } from "./hkt"
 import type { ParseConfigFileHost } from "typescript"
 
 type JQNode =
@@ -197,14 +197,12 @@ type OmitNonStrings<O extends Record<string, unknown>> = {
 	[key in keyof O as O[key] extends string ? key : never]: O[key]
 }
 
-interface OmitNonStringsKind extends Kind.Kind {
-	f(
-		x: Type._$cast<this[Kind._], Record<string, unknown>>,
-	): OmitNonStrings<typeof x>
+interface OmitNonStringsKind extends Kind {
+	f(x: cast<this[_], Record<string, unknown>>): OmitNonStrings<typeof x>
 }
 
-interface OptionalKind extends Kind.Kind {
-	f(x: Type._$cast<this[Kind._], Record<string, unknown>>): {
+interface OptionalKind extends Kind {
+	f(x: cast<this[_], Record<string, unknown>>): {
 		[key in keyof typeof x]?: (typeof x)[key]
 	}
 }
