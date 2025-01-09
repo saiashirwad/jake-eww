@@ -3,7 +3,12 @@
 
 export type Fn = (...x: never[]) => unknown
 
-export type returnType<T> = T extends (...args: never[]) => infer R ? R : never
+export type fnReturn<T> = T extends (...args: never[]) => infer R ? R : never
+export type fnInput<F extends Kind> = F extends {
+	f: (x: infer X) => any
+}
+	? X
+	: unknown
 
 export declare const _: unique symbol
 export type _ = typeof _
@@ -12,12 +17,6 @@ export declare abstract class Kind<F extends Fn = Fn> {
 	abstract readonly [_]: unknown
 	f: F
 }
-
-export type fnInput<F extends Kind> = F extends {
-	f: (x: infer X) => any
-}
-	? X
-	: unknown
 
 // export type reify<K extends Kind> = K & {
 // 	<X extends fnInput<K>>(
@@ -66,7 +65,7 @@ export interface First extends Kind {
 	f(x: cast<this[_], unknown[]>): first<typeof x>
 }
 
-export type apply<F extends Kind, X extends fnInput<F>> = returnType<
+export type apply<F extends Kind, X extends fnInput<F>> = fnReturn<
 	(F & {
 		readonly [_]: X
 	})["f"]
