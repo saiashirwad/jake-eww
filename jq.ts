@@ -2,7 +2,7 @@ import type { ParseConfigFileHost } from "typescript"
 
 type JQNode =
 	| FieldAccess<any>
-	| ArrayMapping
+	| ArrayMapping<any>
 	| ArrayIndex
 	| ObjectConstruction
 	| Pipeline
@@ -162,6 +162,13 @@ type parseWord<
 		? ParserResult<`${acc}${x}`, "">
 		: never
 
+type parseNumber<
+	str extends string,
+	acc extends string = "",
+> = str extends `${infer d extends number}${infer rest}`
+	? parseNumber<rest, `${acc}${d}`>
+	: ParserResult<acc, str>
+
 type parseFieldAccess<str extends string> =
 	trimWhitespace<str> extends `.${infer rest}`
 		? parseWord<rest> extends ParserResult<
@@ -179,7 +186,7 @@ type parseFieldAccess<str extends string> =
 			: never
 		: never
 
-type haha = parseWord<"ha ha">
+type haha = parseNumber<"23ha ha">
 
 type asdf = " " extends wordTerminator
 	? true
