@@ -19,7 +19,7 @@ export type pipe<T extends Kind[], X> = T extends [
 	infer Head extends Kind,
 	...infer Tail extends Kind[],
 ]
-	? [X] extends [never]
+	? X extends never
 		? never
 		: pipe<Tail, apply<Head, cast<X, Input<Head>>>>
 	: X

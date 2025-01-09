@@ -210,6 +210,6 @@ export interface First extends Kind {
 
 type result = pipe<[OptionalKind, CapitalizeKind], { hi: "there"; age: 5 }>
 
-type lha = apply<OptionalKind, { hi: "there" }>
+type result2 = apply<OptionalKind, { hi: "there" }>
 
-type asdf = apply<First, [1, 2, 3]>
+type result3 = apply<First, [1, 2, 3]>
