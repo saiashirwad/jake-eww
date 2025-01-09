@@ -1,3 +1,10 @@
+import type {
+	Kind,
+	Type,
+	Function,
+	$,
+	$$,
+} from "./hkt"
 import type { ParseConfigFileHost } from "typescript"
 
 type JQNode =
@@ -71,7 +78,7 @@ type Identity = {
 //   }
 // }
 
-// {userNames: .users[].name}{
+// {userNames: .users[].name}
 //
 // {
 //   type: "object",
@@ -169,6 +176,13 @@ type parseNumber<
 	? parseNumber<rest, `${acc}${d}`>
 	: ParserResult<acc, str>
 
+type char<
+	str extends string,
+	ch extends string,
+> = str extends `${ch}${infer rest}`
+	? ParserResult<ch, rest>
+	: never
+
 type parseFieldAccess<str extends string> =
 	trimWhitespace<str> extends `.${infer rest}`
 		? parseWord<rest> extends ParserResult<
@@ -186,8 +200,45 @@ type parseFieldAccess<str extends string> =
 			: never
 		: never
 
-type haha = parseNumber<"23ha ha">
+type lol = char<"{hi there", "{">
 
-type asdf = " " extends wordTerminator
-	? true
-	: false
+// type parseObject<str extends string, acc = {}> =
+
+// type haha = parseNumber<"23ha ha">
+
+// type asdf = " " extends wordTerminator
+// 	? true
+// 	: false
+
+type OmitNonStrings<
+	O extends Record<string, unknown>,
+> = {
+	[key in keyof O as O[key] extends string
+		? key
+		: never]: O[key]
+}
+
+interface OmitNonStringsKind extends Kind.Kind {
+	f(
+		x: Type._$cast<
+			this[Kind._],
+			Record<string, unknown>
+		>,
+	): OmitNonStrings<typeof x>
+}
+
+interface OptionalKind extends Kind.Kind {
+	f(
+		x: Type._$cast<
+			this[Kind._],
+			Record<string, unknown>
+		>,
+	): {
+		[key in keyof typeof x]?: (typeof x)[key]
+	}
+}
+
+type result = $$<
+	[OmitNonStringsKind, OptionalKind],
+	{ hi: "there"; age: 5 }
+>

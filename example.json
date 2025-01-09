@@ -1,0 +1,29 @@
+{
+  "type": "pipeline",
+  "left": {
+    "type": "field_access",
+    "field": "users",
+    "next": {
+      "type": "array_mapping"
+    }
+  },
+  "right": {
+    "type": "object",
+    "properties": [
+      {
+        "key": "id",
+        "value": {
+          "type": "field_access",
+          "field": "id"
+        }
+      },
+      {
+        "key": "name",
+        "value": {
+          "type": "field_access",
+          "field": "name"
+        }
+      }
+    ]
+  }
+}
