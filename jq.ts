@@ -1,4 +1,4 @@
-import type { Kind, _, cast, pipe } from "./hkt"
+import type { Kind, _, apply, cast, pipe } from "./hkt"
 
 type JQNode =
 	| FieldAccess<any>
@@ -204,4 +204,12 @@ interface OptionalKind extends Kind {
 	}
 }
 
-type result = pipe<[OptionalKind, CapitalizeKind], { hi: "there"; age: 5 }>
+export interface First extends Kind {
+	f(x: cast<this[_], unknown[]>): typeof x extends [] ? never : (typeof x)[0]
+}
+
+type result = pipe<{ hi: "there"; age: 5 }, [OptionalKind, CapitalizeKind]>
+
+type lha = apply<OptionalKind, { hi: "there" }>
+
+type asdf = apply<First, [1, 2, 3]>
