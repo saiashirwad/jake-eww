@@ -3,8 +3,8 @@
 
 export type Fn = (...x: never[]) => unknown
 
-export type fnReturn<T> = T extends (...args: never[]) => infer R ? R : never
-export type fnInput<F extends Kind> = F extends {
+export type FnReturn<T> = T extends (...args: never[]) => infer R ? R : never
+export type FnInput<F extends Kind> = F extends {
 	f: (x: infer X) => any
 }
 	? X
@@ -34,7 +34,7 @@ export type pipe<T extends Kind[], X> = T extends [
 ]
 	? [X] extends [never]
 		? never
-		: pipe<Tail, apply<Head, cast<X, fnInput<Head>>>>
+		: pipe<Tail, apply<Head, cast<X, FnInput<Head>>>>
 	: X
 
 export type cast<T, U> = T extends U ? T : U
@@ -65,7 +65,7 @@ export interface First extends Kind {
 	f(x: cast<this[_], unknown[]>): first<typeof x>
 }
 
-export type apply<F extends Kind, X extends fnInput<F>> = fnReturn<
+export type apply<F extends Kind, X extends FnInput<F>> = FnReturn<
 	(F & {
 		readonly [_]: X
 	})["f"]
