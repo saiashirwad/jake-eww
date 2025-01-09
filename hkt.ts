@@ -19,15 +19,15 @@ export type fnInput<F extends Kind> = F extends {
 	? X
 	: unknown
 
-export type reify<K extends Kind> = K & {
-	<X extends fnInput<K>>(
-		x: inferType<X>,
-	): apply<K, X> extends infer Result
-		? Result extends Kind
-			? reify<Result>
-			: apply<K, X>
-		: never
-}
+// export type reify<K extends Kind> = K & {
+// 	<X extends fnInput<K>>(
+// 		x: inferType<X>,
+// 	): apply<K, X> extends infer Result
+// 		? Result extends Kind
+// 			? reify<Result>
+// 			: apply<K, X>
+// 		: never
+// }
 
 export type pipe<T extends Kind[], X> = T extends [
 	infer Head extends Kind,
