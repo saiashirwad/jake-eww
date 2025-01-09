@@ -4,9 +4,7 @@
 export type Fn = (...x: never[]) => unknown
 
 export type FnReturn<T> = T extends (...args: never[]) => infer R ? R : never
-export type FnInput<F extends Kind> = F extends {
-	f: (x: infer X) => any
-}
+export type FnInput<F extends Kind> = F extends { f: (x: infer X) => any }
 	? X
 	: unknown
 
@@ -18,16 +16,6 @@ export declare abstract class Kind<F extends Fn = Fn> {
 	f: F
 }
 
-// export type reify<K extends Kind> = K & {
-// 	<X extends fnInput<K>>(
-// 		x: inferType<X>,
-// 	): apply<K, X> extends infer Result
-// 		? Result extends Kind
-// 			? reify<Result>
-// 			: apply<K, X>
-// 		: never
-// }
-
 export type pipe<T extends Kind[], X> = T extends [
 	infer Head extends Kind,
 	...infer Tail extends Kind[],
@@ -38,26 +26,6 @@ export type pipe<T extends Kind[], X> = T extends [
 	: X
 
 export type cast<T, U> = T extends U ? T : U
-
-type inferred =
-	| string
-	| number
-	| boolean
-	| undefined
-	| null
-	| Fn
-	| Kind
-	| inferredTuple
-	| {
-			[key: string]: inferred
-	  }
-
-type inferredTuple = inferred[] | ReadonlyArray<inferred>
-
-export type inferType<
-	X,
-	Narrow = cast<X, inferred> | [...cast<X, inferredTuple>],
-> = Narrow extends unknown[] ? { [key in keyof X]: inferType<X[key]> } : Narrow
 
 export type first<T extends unknown[]> = T extends [] ? never : T[0]
 

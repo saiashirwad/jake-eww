@@ -192,12 +192,10 @@ type lol = char<"{hi there", "{">
 // 	? true
 // 	: false
 
-type OmitNonStrings<O extends Record<string, unknown>> = {
-	[key in keyof O as O[key] extends string ? key : never]: O[key]
-}
-
-interface OmitNonStringsKind extends Kind {
-	f(x: cast<this[_], Record<string, unknown>>): OmitNonStrings<typeof x>
+interface CapitalizeKind extends Kind {
+	f(x: cast<this[_], Record<string, unknown>>): {
+		[key in keyof typeof x as Capitalize<key & string>]: (typeof x)[key]
+	}
 }
 
 interface OptionalKind extends Kind {
@@ -206,4 +204,4 @@ interface OptionalKind extends Kind {
 	}
 }
 
-type result = pipe<[OmitNonStringsKind, OptionalKind], { hi: "there"; age: 5 }>
+type result = pipe<[OptionalKind, CapitalizeKind], { hi: "there"; age: 5 }>
